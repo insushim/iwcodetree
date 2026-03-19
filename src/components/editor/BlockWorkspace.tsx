@@ -7,7 +7,6 @@ interface BlockWorkspaceProps {
   onCodeChange: (code: string) => void;
 }
 
-// Store XML per sprite
 const spriteXmlMap = new Map<string, string>();
 
 export function BlockWorkspace({
@@ -21,14 +20,14 @@ export function BlockWorkspace({
   const saveCurrentXml = useCallback(() => {
     if (workspaceRef.current) {
       try {
-        const Blockly = (window as any).Blockly;
+        const Blockly = (window as any).__Blockly;
         if (Blockly) {
           const xml = Blockly.Xml.workspaceToDom(workspaceRef.current);
           const xmlText = Blockly.Xml.domToText(xml);
           spriteXmlMap.set(currentSpriteRef.current, xmlText);
         }
       } catch {
-        // Blockly not loaded yet
+        /* ignore */
       }
     }
   }, []);
@@ -36,7 +35,7 @@ export function BlockWorkspace({
   const loadXmlForSprite = useCallback((sid: string) => {
     if (workspaceRef.current) {
       try {
-        const Blockly = (window as any).Blockly;
+        const Blockly = (window as any).__Blockly;
         if (Blockly) {
           workspaceRef.current.clear();
           const xmlText = spriteXmlMap.get(sid);
@@ -46,93 +45,29 @@ export function BlockWorkspace({
           }
         }
       } catch {
-        // Blockly not loaded yet
+        /* ignore */
       }
     }
   }, []);
 
-  // Initialize Blockly
   useEffect(() => {
     if (!containerRef.current) return;
 
     let ws: any = null;
 
-    const initBlockly = async () => {
+    const init = async () => {
       try {
+        // Import Blockly and our setup
         const Blockly = await import("blockly");
-        (window as any).Blockly = Blockly;
+        (window as any).__Blockly = Blockly;
 
-        const toolbox = {
-          kind: "categoryToolbox",
-          contents: [
-            {
-              kind: "category",
-              name: "동작",
-              colour: "#4C97FF",
-              contents: [
-                { kind: "block", type: "controls_repeat_ext" },
-                { kind: "block", type: "controls_whileUntil" },
-              ],
-            },
-            {
-              kind: "category",
-              name: "형태",
-              colour: "#9966FF",
-              contents: [
-                { kind: "block", type: "text" },
-                { kind: "block", type: "text_print" },
-              ],
-            },
-            {
-              kind: "category",
-              name: "이벤트",
-              colour: "#FFD500",
-              contents: [{ kind: "block", type: "procedures_defnoreturn" }],
-            },
-            {
-              kind: "category",
-              name: "제어",
-              colour: "#FFAB19",
-              contents: [
-                { kind: "block", type: "controls_if" },
-                { kind: "block", type: "controls_repeat_ext" },
-              ],
-            },
-            {
-              kind: "category",
-              name: "감지",
-              colour: "#5CB1D6",
-              contents: [
-                { kind: "block", type: "logic_compare" },
-                { kind: "block", type: "logic_operation" },
-              ],
-            },
-            {
-              kind: "category",
-              name: "연산",
-              colour: "#40BF4A",
-              contents: [
-                { kind: "block", type: "math_number" },
-                { kind: "block", type: "math_arithmetic" },
-              ],
-            },
-            {
-              kind: "category",
-              name: "변수",
-              colour: "#FF8C1A",
-              custom: "VARIABLE",
-            },
-          ],
-        };
+        // Import and run our custom block registration + toolbox
+        const { initBlockly, toolbox } = await import("@/lib/blockly/setup");
+        initBlockly();
 
         ws = Blockly.inject(containerRef.current!, {
           toolbox,
-          grid: {
-            spacing: 20,
-            length: 3,
-            colour: "#E2E8F0",
-            snap: true,
-          },
+          grid: { spacing: 20, length: 3, colour: "#E2E8F0", snap: true },
           zoom: {
             controls: true,
             wheel: true,
@@ -141,29 +76,23 @@ export function BlockWorkspace({
             minScale: 0.3,
           },
           trashcan: true,
-          move: {
-            scrollbars: true,
-            drag: true,
-            wheel: true,
-          },
+          move: { scrollbars: true, drag: true, wheel: true },
           renderer: "zelos",
         });
 
         workspaceRef.current = ws;
-
-        // Load saved xml
         loadXmlForSprite(currentSpriteRef.current);
 
-        // Listen for changes
         ws.addChangeListener(() => {
           try {
-            const Blockly = (window as any).Blockly;
-            if (Blockly?.JavaScript) {
-              const code = (Blockly.JavaScript as any).workspaceToCode(ws);
+            // Try to generate code from our custom generator
+            const { generateCode } = require("@/lib/blockly/generator");
+            if (generateCode) {
+              const code = generateCode(ws);
               onCodeChange(code);
             }
           } catch {
-            // Code generation not available
+            // Code generation not available yet
           }
         });
       } catch (err) {
@@ -171,20 +100,19 @@ export function BlockWorkspace({
       }
     };
 
-    initBlockly();
+    init();
 
     return () => {
       if (ws) {
         try {
           ws.dispose();
         } catch {
-          // Ignore disposal errors
+          /* ignore */
         }
       }
     };
   }, [loadXmlForSprite, onCodeChange]);
 
-  // Handle sprite switching
   useEffect(() => {
     if (spriteId !== currentSpriteRef.current) {
       saveCurrentXml();
