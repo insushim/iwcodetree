@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F8FAFC"/>
+      <stop offset="100%" style="stop-color:#EEF2FF"/>
+    </linearGradient>
+    <linearGradient id="primary" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366F1"/>
+      <stop offset="100%" style="stop-color:#4F46E5"/>
+    </linearGradient>
+    <linearGradient id="green" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10B981"/>
+      <stop offset="100%" style="stop-color:#059669"/>
+    </linearGradient>
+    <linearGradient id="amber" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F59E0B"/>
+      <stop offset="100%" style="stop-color:#D97706"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bgGrad)"/>
+
+  <!-- Decorative circles -->
+  <circle cx="1050" cy="100" r="200" fill="#6366F1" opacity="0.06"/>
+  <circle cx="150" cy="530" r="180" fill="#10B981" opacity="0.06"/>
+  <circle cx="900" cy="500" r="120" fill="#F59E0B" opacity="0.06"/>
+
+  <!-- Floating blocks decoration -->
+  <!-- Blue motion block -->
+  <g transform="translate(820, 140) rotate(-8)">
+    <rect width="100" height="60" rx="12" fill="#4C97FF" opacity="0.9"/>
+    <text x="20" y="40" font-family="Arial,sans-serif" font-weight="700" font-size="20" fill="#FFFFFF">이동</text>
+  </g>
+
+  <!-- Yellow event block -->
+  <g transform="translate(950, 220) rotate(5)">
+    <rect width="90" height="55" rx="12" fill="#FFD500" opacity="0.9"/>
+    <text x="18" y="37" font-family="Arial,sans-serif" font-size="22">🚩</text>
+  </g>
+
+  <!-- Orange control block -->
+  <g transform="translate(870, 340) rotate(-3)">
+    <rect width="110" height="60" rx="12" fill="#FFAB19" opacity="0.9"/>
+    <text x="15" y="40" font-family="Arial,sans-serif" font-weight="700" font-size="18" fill="#FFFFFF">반복</text>
+  </g>
+
+  <!-- Green operators block -->
+  <g transform="translate(980, 410) rotate(7)">
+    <rect width="80" height="50" rx="12" fill="#40BF4A" opacity="0.9"/>
+    <text x="15" y="35" font-family="Arial,sans-serif" font-weight="700" font-size="18" fill="#FFFFFF">+−</text>
+  </g>
+
+  <!-- Purple looks block -->
+  <g transform="translate(830, 460) rotate(-5)">
+    <rect width="95" height="55" rx="12" fill="#9966FF" opacity="0.9"/>
+    <text x="20" y="37" font-family="Arial,sans-serif" font-size="20">💬</text>
+  </g>
+
+  <!-- Logo icon -->
+  <g transform="translate(100, 160)">
+    <rect width="80" height="80" rx="20" fill="url(#primary)"/>
+    <!-- Block pieces inside logo -->
+    <rect x="15" y="18" width="30" height="20" rx="4" fill="#FFFFFF" opacity="0.9"/>
+    <rect x="25" y="12" width="12" height="10" rx="3" fill="#FFFFFF" opacity="0.9"/>
+    <rect x="22" y="42" width="40" height="22" rx="4" fill="#10B981" opacity="0.9"/>
+    <rect x="30" y="36" width="12" height="10" rx="3" fill="#10B981" opacity="0.9"/>
+  </g>
+
+  <!-- Title -->
+  <text x="200" y="215" font-family="'Nunito',Arial,sans-serif" font-weight="900" font-size="60" fill="#0F172A">CodeBlock</text>
+
+  <!-- Subtitle -->
+  <text x="105" y="310" font-family="'Nunito','Pretendard',Arial,sans-serif" font-weight="800" font-size="42" fill="#0F172A">블록 하나로 시작하는</text>
+  <text x="105" y="370" font-family="'Nunito','Pretendard',Arial,sans-serif" font-weight="800" font-size="42">
+    <tspan fill="#6366F1">코딩</tspan>
+    <tspan fill="#0F172A"> </tspan>
+    <tspan fill="#10B981">세상</tspan>
+  </text>
+
+  <!-- Description -->
+  <text x="105" y="430" font-family="'Pretendard',Arial,sans-serif" font-weight="500" font-size="22" fill="#475569">초등학생을 위한 블록 코딩 교육 플랫폼</text>
+
+  <!-- Stats bar -->
+  <g transform="translate(105, 470)">
+    <rect width="550" height="50" rx="14" fill="#FFFFFF" opacity="0.8" stroke="#E2E8F0" stroke-width="1"/>
+    <text x="30" y="33" font-family="'Nunito',Arial,sans-serif" font-weight="800" font-size="18" fill="#6366F1">36개 미션</text>
+    <line x1="170" y1="12" x2="170" y2="38" stroke="#E2E8F0" stroke-width="1"/>
+    <text x="195" y="33" font-family="'Nunito',Arial,sans-serif" font-weight="800" font-size="18" fill="#10B981">100+ 블록</text>
+    <line x1="345" y1="12" x2="345" y2="38" stroke="#E2E8F0" stroke-width="1"/>
+    <text x="370" y="33" font-family="'Nunito',Arial,sans-serif" font-weight="800" font-size="18" fill="#F59E0B">30개 뱃지</text>
+  </g>
+
+  <!-- Bottom URL -->
+  <text x="105" y="585" font-family="'Nunito',Arial,sans-serif" font-weight="600" font-size="18" fill="#94A3B8">iwcodetree.pages.dev</text>
+</svg>
