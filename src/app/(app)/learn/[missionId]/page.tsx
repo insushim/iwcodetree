@@ -1,11 +1,15 @@
-"use client";
+import MissionClient from "./MissionClient";
 
-import { useParams } from "next/navigation";
-import { MissionPlayer } from "@/components/learn/MissionPlayer";
+export function generateStaticParams() {
+  const ids = [];
+  for (let s = 1; s <= 6; s++) {
+    for (let m = 1; m <= 6; m++) {
+      ids.push({ missionId: `${s}-${m}` });
+    }
+  }
+  return ids;
+}
 
 export default function MissionPage() {
-  const params = useParams();
-  const missionId = params.missionId as string;
-
-  return <MissionPlayer missionId={missionId} />;
+  return <MissionClient />;
 }
