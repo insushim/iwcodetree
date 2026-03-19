@@ -1,11 +1,136 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand Colors */
+  --color-primary: #6366F1;
+  --color-primary-light: #818CF8;
+  --color-primary-dark: #4F46E5;
+  --color-primary-50: #EEF2FF;
+  --color-secondary: #10B981;
+  --color-secondary-light: #34D399;
+  --color-accent: #F59E0B;
+  --color-accent-light: #FCD34D;
+  --color-danger: #EF4444;
+  --color-info: #3B82F6;
+
+  /* Block Category Colors */
+  --color-block-motion: #4C97FF;
+  --color-block-looks: #9966FF;
+  --color-block-sound: #CF63CF;
+  --color-block-events: #FFD500;
+  --color-block-control: #FFAB19;
+  --color-block-sensing: #5CB1D6;
+  --color-block-operators: #40BF4A;
+  --color-block-variables: #FF8C1A;
+  --color-block-pen: #0FBD8C;
+  --color-block-myblocks: #FF6680;
+
+  /* Surface Colors */
+  --color-surface: #F8FAFC;
+  --color-surface-card: #FFFFFF;
+  --color-surface-sidebar: #F1F5F9;
+  --color-surface-editor: #FAFBFE;
+  --color-surface-elevated: #FFFFFF;
+
+  /* Text Colors */
+  --color-txt-1: #0F172A;
+  --color-txt-2: #475569;
+  --color-txt-3: #94A3B8;
+
+  /* Border Colors */
+  --color-bdr: #E2E8F0;
+  --color-bdr-light: #F1F5F9;
+
+  /* Fonts */
+  --font-sans: 'Nunito', 'Pretendard', -apple-system, sans-serif;
+  --font-code: 'Fira Code', monospace;
+
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.04), 0 2px 4px rgba(0,0,0,0.03);
+  --shadow-lg: 0 10px 25px rgba(0,0,0,0.06), 0 4px 10px rgba(0,0,0,0.04);
+  --shadow-xl: 0 20px 40px rgba(0,0,0,0.08);
+  --shadow-glow: 0 0 24px rgba(99,102,241,0.25);
+  --shadow-glow-green: 0 0 24px rgba(16,185,129,0.25);
+  --shadow-glow-amber: 0 0 24px rgba(245,158,11,0.25);
+
+  /* Animations */
+  --animate-float: float 3s ease-in-out infinite;
+  --animate-pulse-glow: pulse-glow 2s ease-in-out infinite;
+  --animate-pop-in: pop-in 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  --animate-slide-up: slide-up 0.5s ease-out;
+  --animate-shake: shake 0.3s ease-in-out;
+  --animate-bounce-in: bounce-in 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  --animate-star-burst: star-burst 0.6s cubic-bezier(0.34,1.56,0.64,1);
+  --animate-shimmer: shimmer 2s linear infinite;
+  --animate-confetti-fall: confetti-fall 2s ease-in forwards;
+  --animate-xp-fill: xp-fill 1s ease-out forwards;
+  --animate-glow-pulse: glow-pulse 2s ease-in-out infinite;
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 8px rgba(99,102,241,0.3); }
+    50% { box-shadow: 0 0 20px rgba(99,102,241,0.6); }
+  }
+  @keyframes pop-in {
+    0% { transform: scale(0.7); opacity: 0; }
+    60% { transform: scale(1.08); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes slide-up {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+  }
+  @keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+  @keyframes confetti-fall {
+    0% { transform: translateY(-10px) rotate(0); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+  @keyframes star-burst {
+    0% { transform: scale(0) rotate(0); opacity: 0; }
+    50% { transform: scale(1.3) rotate(180deg); opacity: 1; }
+    100% { transform: scale(1) rotate(360deg); opacity: 1; }
+  }
+  @keyframes xp-fill {
+    0% { width: 0; }
+    100% { width: var(--fill); }
+  }
+  @keyframes bounce-in {
+    0% { transform: scale(0); }
+    50% { transform: scale(1.15); }
+    70% { transform: scale(0.95); }
+    100% { transform: scale(1); }
+  }
+  @keyframes glow-pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+}
+
+/* Font imports */
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
+/* CSS Variables for non-Tailwind usage */
 :root {
   --primary: #6366F1;
   --primary-light: #818CF8;
@@ -17,16 +142,6 @@
   --accent-light: #FCD34D;
   --danger: #EF4444;
   --info: #3B82F6;
-  --block-motion: #4C97FF;
-  --block-looks: #9966FF;
-  --block-sound: #CF63CF;
-  --block-events: #FFD500;
-  --block-control: #FFAB19;
-  --block-sensing: #5CB1D6;
-  --block-operators: #40BF4A;
-  --block-variables: #FF8C1A;
-  --block-pen: #0FBD8C;
-  --block-myblocks: #FF6680;
   --bg-main: #F8FAFC;
   --bg-card: #FFFFFF;
   --bg-sidebar: #F1F5F9;
@@ -37,19 +152,16 @@
   --text-3: #94A3B8;
   --border: #E2E8F0;
   --border-light: #F1F5F9;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
-  --radius-full: 9999px;
-  --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-md: 0 4px 6px rgba(0,0,0,0.04), 0 2px 4px rgba(0,0,0,0.03);
-  --shadow-lg: 0 10px 25px rgba(0,0,0,0.06), 0 4px 10px rgba(0,0,0,0.04);
-  --shadow-xl: 0 20px 40px rgba(0,0,0,0.08);
-  --shadow-glow: 0 0 24px rgba(99,102,241,0.25);
-  --shadow-glow-green: 0 0 24px rgba(16,185,129,0.25);
-  --shadow-glow-amber: 0 0 24px rgba(245,158,11,0.25);
+  --block-motion: #4C97FF;
+  --block-looks: #9966FF;
+  --block-sound: #CF63CF;
+  --block-events: #FFD500;
+  --block-control: #FFAB19;
+  --block-sensing: #5CB1D6;
+  --block-operators: #40BF4A;
+  --block-variables: #FF8C1A;
+  --block-pen: #0FBD8C;
+  --block-myblocks: #FF6680;
 }
 
 .dark {
@@ -65,49 +177,52 @@
   --border-light: #1E293B;
 }
 
+/* Base styles */
 body {
   font-family: 'Nunito', 'Pretendard', -apple-system, sans-serif;
-  background: var(--bg-main);
-  color: var(--text-1);
+  background: #F8FAFC;
+  color: #0F172A;
   -webkit-font-smoothing: antialiased;
 }
 
-h1,h2,h3,h4,h5,h6 { font-weight: 800; }
+h1, h2, h3, h4, h5, h6 { font-weight: 800; }
 code, pre { font-family: 'Fira Code', monospace; }
 
+/* Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
 
-.blocklySvg { background: var(--bg-editor) !important; }
+/* Blockly overrides */
+.blocklySvg { background: #FAFBFE !important; }
 .blocklyMainBackground { stroke: none !important; }
-.blocklyToolboxDiv { background: var(--bg-sidebar) !important; padding: 8px 0; }
+.blocklyToolboxDiv { background: #F1F5F9 !important; padding: 8px 0; }
 .blocklyTreeRow:hover { background: rgba(99,102,241,0.08) !important; }
-.blocklyFlyoutBackground { fill: var(--bg-card) !important; fill-opacity: 0.98 !important; }
+.blocklyFlyoutBackground { fill: #FFFFFF !important; fill-opacity: 0.98 !important; }
 
-@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
-@keyframes pulse-glow { 0%,100%{box-shadow:0 0 8px rgba(99,102,241,0.3)} 50%{box-shadow:0 0 20px rgba(99,102,241,0.6)} }
-@keyframes pop-in { 0%{transform:scale(0.7);opacity:0} 60%{transform:scale(1.08)} 100%{transform:scale(1);opacity:1} }
-@keyframes slide-up { 0%{transform:translateY(20px);opacity:0} 100%{transform:translateY(0);opacity:1} }
-@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} }
-@keyframes shimmer { 0%{background-position:-200% center} 100%{background-position:200% center} }
-@keyframes confetti-fall { 0%{transform:translateY(-10px) rotate(0);opacity:1} 100%{transform:translateY(100vh) rotate(720deg);opacity:0} }
-@keyframes star-burst { 0%{transform:scale(0) rotate(0);opacity:0} 50%{transform:scale(1.3) rotate(180deg);opacity:1} 100%{transform:scale(1) rotate(360deg);opacity:1} }
-@keyframes xp-fill { 0%{width:0} 100%{width:var(--fill)} }
-@keyframes bounce-in { 0%{transform:scale(0)} 50%{transform:scale(1.15)} 70%{transform:scale(0.95)} 100%{transform:scale(1)} }
-@keyframes glow-pulse { 0%,100%{opacity:0.5} 50%{opacity:1} }
+/* Custom utility classes */
+.glass {
+  background: rgba(255,255,255,0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.3);
+}
+.dark .glass {
+  background: rgba(15,23,42,0.8);
+  border-color: rgba(51,65,85,0.3);
+}
 
-.animate-float { animation: float 3s ease-in-out infinite; }
-.animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
-.animate-pop-in { animation: pop-in 0.4s cubic-bezier(0.34,1.56,0.64,1); }
-.animate-slide-up { animation: slide-up 0.5s ease-out; }
-.animate-shake { animation: shake 0.3s ease-in-out; }
-.animate-bounce-in { animation: bounce-in 0.5s cubic-bezier(0.34,1.56,0.64,1); }
-.animate-star-burst { animation: star-burst 0.6s cubic-bezier(0.34,1.56,0.64,1); }
+.gradient-text {
+  background: linear-gradient(135deg, #6366F1, #10B981);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
 
-.glass { background: rgba(255,255,255,0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.3); }
-.dark .glass { background: rgba(15,23,42,0.8); border-color: rgba(51,65,85,0.3); }
-.gradient-text { background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.card-hover { transition: all 0.2s ease; }
-.card-hover:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+.card-hover {
+  transition: all 0.2s ease;
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.06), 0 4px 10px rgba(0,0,0,0.04);
+}
