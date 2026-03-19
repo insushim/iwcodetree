@@ -1,57 +1,25 @@
 "use client";
 
-import { CheckCircle, Star, Award, Edit3 } from "lucide-react";
-
-const activities = [
-  {
-    icon: CheckCircle,
-    text: "미션 '첫 움직임' 클리어!",
-    time: "30분 전",
-    color: "var(--secondary)",
-  },
-  {
-    icon: Star,
-    text: "+50 XP 획득",
-    time: "30분 전",
-    color: "var(--accent)",
-  },
-  {
-    icon: Award,
-    text: "'첫 걸음' 뱃지 획득",
-    time: "1시간 전",
-    color: "var(--block-looks)",
-  },
-  {
-    icon: Edit3,
-    text: "'우주 탐험 게임' 수정",
-    time: "2시간 전",
-    color: "var(--primary)",
-  },
-  {
-    icon: CheckCircle,
-    text: "미션 '반복의 마법' 클리어!",
-    time: "어제",
-    color: "var(--secondary)",
-  },
-];
+import { Activity } from "lucide-react";
 
 export function RecentActivity() {
+  // In a real app, this would come from a store/API.
+  // For now, show empty state since there's no activity yet.
   return (
-    <div className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-light)] divide-y divide-[var(--border-light)]">
-      {activities.map((a, i) => (
-        <div key={i} className="flex items-center gap-3 px-4 py-3">
-          <div
-            className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-            style={{ background: `${a.color}15` }}
-          >
-            <a.icon className="w-4 h-4" style={{ color: a.color }} />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-sm font-semibold truncate">{a.text}</div>
-            <div className="text-xs text-[var(--text-3)]">{a.time}</div>
-          </div>
-        </div>
-      ))}
+    <div
+      className="rounded-xl p-6 text-center"
+      style={{ background: "#FFFFFF", border: "1px solid #F1F5F9" }}
+    >
+      <Activity
+        className="w-10 h-10 mx-auto mb-3"
+        style={{ color: "#CBD5E1" }}
+      />
+      <p className="text-sm font-semibold" style={{ color: "#64748B" }}>
+        아직 활동 기록이 없어요
+      </p>
+      <p className="text-xs mt-1" style={{ color: "#94A3B8" }}>
+        미션을 시작하거나 프로젝트를 만들면 여기에 표시돼요!
+      </p>
     </div>
   );
 }

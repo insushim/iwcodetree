@@ -24,7 +24,7 @@ export default function SignupPage() {
     setLoading(true);
 
     const displayName = username;
-    const result = signup(username, displayName, password);
+    const result = signup(username, displayName, password, role);
 
     if (result.success) {
       router.push("/dashboard");

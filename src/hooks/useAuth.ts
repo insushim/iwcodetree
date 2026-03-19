@@ -19,7 +19,12 @@ export function useAuth() {
   } = useUserStore();
 
   const signup = useCallback(
-    (username: string, displayName: string, password: string): AuthResult => {
+    (
+      username: string,
+      displayName: string,
+      password: string,
+      role: "student" | "teacher" = "student",
+    ): AuthResult => {
       if (!username || !displayName || !password) {
         return { success: false, error: "All fields are required" };
       }
@@ -48,9 +53,9 @@ export function useAuth() {
         id: generateId("usr"),
         username,
         displayName,
-        avatarEmoji: "🐱",
-        avatarBgColor: "#7c3aed",
-        role: "student",
+        avatarEmoji: role === "teacher" ? "👩‍🏫" : "🐱",
+        avatarBgColor: role === "teacher" ? "#6366F1" : "#7c3aed",
+        role,
       };
 
       setUser(profile);
