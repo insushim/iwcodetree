@@ -46,6 +46,15 @@ export default function PlayClient() {
     };
   }, []);
 
+  // Auto-play when mounted
+  useEffect(() => {
+    if (mounted && project && runtimeRef.current && !running) {
+      runtimeRef.current.start(project.code);
+      setRunning(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mounted]);
+
   const handlePlay = () => {
     if (!project || !runtimeRef.current) return;
     runtimeRef.current.start(project.code);
@@ -78,7 +87,7 @@ export default function PlayClient() {
 
   return (
     <div className="min-h-screen bg-[var(--bg-main)] flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-[520px] flex items-center justify-between mb-4">
+      <div className="w-full max-w-[720px] flex items-center justify-between mb-4">
         <Link
           href="/explore"
           className="flex items-center gap-2 text-sm font-bold text-[var(--text-2)] hover:text-[var(--text-1)]"
@@ -102,19 +111,19 @@ export default function PlayClient() {
       {/* Stage */}
       <div
         className="relative bg-white rounded-2xl shadow-xl overflow-hidden border border-[var(--border-light)]"
-        style={{ width: 480, height: 360 }}
+        style={{ width: 700, height: 525 }}
       >
         {mounted && StageComponent && (
           <StageComponent
-            width={480}
-            height={360}
+            width={700}
+            height={525}
             runtime={runtimeRef.current}
           />
         )}
       </div>
 
       {/* Play / Stop controls */}
-      <div className="w-full max-w-[520px] flex items-center gap-2 mt-3">
+      <div className="w-full max-w-[720px] flex items-center gap-2 mt-3">
         {!running ? (
           <button
             onClick={handlePlay}
@@ -135,7 +144,7 @@ export default function PlayClient() {
       </div>
 
       {/* Project info */}
-      <div className="w-full max-w-[520px] mt-4 bg-[var(--bg-card)] rounded-xl border border-[var(--border-light)] p-4">
+      <div className="w-full max-w-[720px] mt-4 bg-[var(--bg-card)] rounded-xl border border-[var(--border-light)] p-4">
         <h1 className="text-lg font-bold">
           {project.thumbnail} {project.name}
         </h1>

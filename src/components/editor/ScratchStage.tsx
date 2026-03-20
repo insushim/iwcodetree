@@ -246,6 +246,12 @@ export function ScratchStage({ width, height, runtime }: ScratchStageProps) {
   const handleKeyDown = useCallback(
     (e: ReactKeyboardEvent) => {
       if (!runtime) return;
+      // Prevent arrow keys / space from scrolling the page
+      if (
+        ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "].includes(e.key)
+      ) {
+        e.preventDefault();
+      }
       runtime.handleKeyDown(e.key);
     },
     [runtime],
@@ -254,10 +260,22 @@ export function ScratchStage({ width, height, runtime }: ScratchStageProps) {
   const handleKeyUp = useCallback(
     (e: ReactKeyboardEvent) => {
       if (!runtime) return;
+      if (
+        ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "].includes(e.key)
+      ) {
+        e.preventDefault();
+      }
       runtime.handleKeyUp(e.key);
     },
     [runtime],
   );
+
+  // Auto-focus canvas when runtime starts
+  useEffect(() => {
+    if (runtime?.isRunning() && canvasRef.current) {
+      canvasRef.current.focus();
+    }
+  });
 
   // ---- Ask submit ----
   const handleAskSubmit = useCallback(() => {
