@@ -278,11 +278,99 @@ interface Thread {
 // ScratchRuntime
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Sound Engine
+// ---------------------------------------------------------------------------
+
+export class SoundEngine {
+  private audioCtx: AudioContext | null = null;
+  private volume = 100;
+
+  private getCtx(): AudioContext {
+    if (!this.audioCtx) this.audioCtx = new AudioContext();
+    return this.audioCtx;
+  }
+
+  playSound(name: string): void {
+    const ctx = this.getCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    gain.gain.value = (this.volume / 100) * 0.3;
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    // Simple synth sounds based on name
+    const presets: Record<
+      string,
+      { freq: number; type: OscillatorType; dur: number }
+    > = {
+      meow: { freq: 800, type: "sawtooth", dur: 0.3 },
+      pop: { freq: 400, type: "sine", dur: 0.1 },
+      ding: { freq: 1200, type: "sine", dur: 0.4 },
+      boing: { freq: 300, type: "triangle", dur: 0.3 },
+      buzz: { freq: 150, type: "square", dur: 0.2 },
+      click: { freq: 1000, type: "square", dur: 0.05 },
+      drum: { freq: 100, type: "triangle", dur: 0.15 },
+    };
+    const p = presets[name] || presets.pop;
+    osc.type = p.type;
+    osc.frequency.setValueAtTime(p.freq, ctx.currentTime);
+    if (name === "meow") {
+      osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + p.dur);
+    }
+    if (name === "boing") {
+      osc.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.1);
+      osc.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + p.dur);
+    }
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + p.dur);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + p.dur + 0.05);
+  }
+
+  playNote(midiNote: number, durationSecs: number): void {
+    const ctx = this.getCtx();
+    const freq = 440 * Math.pow(2, (midiNote - 69) / 12);
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    gain.gain.value = (this.volume / 100) * 0.25;
+    osc.type = "triangle";
+    osc.frequency.value = freq;
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    gain.gain.exponentialRampToValueAtTime(
+      0.001,
+      ctx.currentTime + durationSecs,
+    );
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + durationSecs + 0.05);
+  }
+
+  setVolume(v: number): void {
+    this.volume = Math.max(0, Math.min(100, v));
+  }
+
+  changeVolume(dv: number): void {
+    this.setVolume(this.volume + dv);
+  }
+
+  getVolume(): number {
+    return this.volume;
+  }
+
+  stopAll(): void {
+    if (this.audioCtx) {
+      this.audioCtx.close();
+      this.audioCtx = null;
+    }
+  }
+}
+
 export type RenderCallback = () => void;
 
 export class ScratchRuntime {
   sprite: Sprite;
   stage: StageState;
+  soundEngine: SoundEngine;
 
   // ask UI state (read by ScratchStage component)
   askActive = false;
@@ -310,6 +398,7 @@ export class ScratchRuntime {
   constructor() {
     this.sprite = new Sprite();
     this.sprite._bind(this);
+    this.soundEngine = new SoundEngine();
 
     this.penCanvas = document.createElement("canvas");
     this.penCanvas.width = 480;
