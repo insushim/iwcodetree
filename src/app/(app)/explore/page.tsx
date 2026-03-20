@@ -47,16 +47,84 @@ const STUDENT_DEFAULTS = [
   },
 ];
 
+const EMOJIS = [
+  "🎮",
+  "🎨",
+  "🎭",
+  "🌟",
+  "💡",
+  "🔥",
+  "🎪",
+  "🧩",
+  "🎯",
+  "🏆",
+  "🐶",
+  "🐰",
+  "🦊",
+  "🐻",
+  "🐼",
+  "🌸",
+  "🌺",
+  "⚡",
+  "💎",
+  "🎲",
+];
+
+function loadStudentProjects() {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem("studentProjects");
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveStudentProjects(projects: any[]) {
+  localStorage.setItem("studentProjects", JSON.stringify(projects));
+}
+
 export default function ExplorePage() {
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<SortType>("trending");
   const [showUpload, setShowUpload] = useState(false);
+  const [uploadName, setUploadName] = useState("");
+  const [uploadDesc, setUploadDesc] = useState("");
+  const [uploadAuthor, setUploadAuthor] = useState("");
+  const [studentProjects, setStudentProjects] = useState<any[]>(() =>
+    loadStudentProjects(),
+  );
+
+  const handleShare = () => {
+    if (!uploadName.trim()) return;
+    const newProject = {
+      id: "u" + Date.now(),
+      name: uploadName.trim(),
+      author: uploadAuthor.trim() || "익명",
+      likes: 0,
+      views: 0,
+      thumbnail: EMOJIS[Math.floor(Math.random() * EMOJIS.length)],
+      description: uploadDesc.trim() || "",
+    };
+    const updated = [newProject, ...studentProjects];
+    setStudentProjects(updated);
+    saveStudentProjects(updated);
+    setUploadName("");
+    setUploadDesc("");
+    setUploadAuthor("");
+    setShowUpload(false);
+  };
 
   const allProjects = useMemo(() => {
     const all = [
       ...COMMUNITY_PROJECTS.map((p) => ({
         ...p,
         category: "featured" as const,
+      })),
+      ...studentProjects.map((p: any) => ({
+        ...p,
+        category: "student" as const,
+        code: "",
       })),
       ...STUDENT_DEFAULTS.map((p) => ({
         ...p,
@@ -77,7 +145,7 @@ export default function ExplorePage() {
       return [...filtered].sort((a, b) => b.likes - a.likes);
     if (sort === "recent") return [...filtered].reverse();
     return filtered; // trending = default order
-  }, [search, sort]);
+  }, [search, sort, studentProjects]);
 
   const featured = allProjects.filter((p) => p.category === "featured");
   const student = allProjects.filter((p) => p.category === "student");
@@ -120,14 +188,28 @@ export default function ExplorePage() {
           <p className="text-sm text-[var(--text-2)] mb-4">
             에디터에서 만든 프로젝트를 다른 친구들과 공유해보세요!
           </p>
-          <div className="grid sm:grid-cols-2 gap-4">
+          <div className="grid sm:grid-cols-3 gap-4">
             <div>
               <label className="text-xs font-bold text-[var(--text-3)] mb-1 block">
-                프로젝트 이름
+                프로젝트 이름 *
               </label>
               <input
                 type="text"
+                value={uploadName}
+                onChange={(e) => setUploadName(e.target.value)}
                 placeholder="멋진 프로젝트 이름"
+                className="w-full px-3 py-2 rounded-lg border border-[var(--border)] bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-bold text-[var(--text-3)] mb-1 block">
+                만든이
+              </label>
+              <input
+                type="text"
+                value={uploadAuthor}
+                onChange={(e) => setUploadAuthor(e.target.value)}
+                placeholder="닉네임"
                 className="w-full px-3 py-2 rounded-lg border border-[var(--border)] bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20"
               />
             </div>
@@ -137,13 +219,21 @@ export default function ExplorePage() {
               </label>
               <input
                 type="text"
+                value={uploadDesc}
+                onChange={(e) => setUploadDesc(e.target.value)}
                 placeholder="프로젝트를 소개해주세요"
                 className="w-full px-3 py-2 rounded-lg border border-[var(--border)] bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20"
               />
             </div>
           </div>
           <div className="mt-4 flex gap-2">
-            <Button size="sm">공유하기</Button>
+            <Button
+              size="sm"
+              onClick={handleShare}
+              disabled={!uploadName.trim()}
+            >
+              공유하기
+            </Button>
             <Button
               size="sm"
               variant="ghost"
