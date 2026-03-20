@@ -33,6 +33,7 @@ export class Sprite {
   direction = 90;
   size = 100;
   visible = true;
+  emoji = "\u{1F431}"; // default cat, can be changed per project
   costumeIndex = 0;
   backdropIndex = 0;
   speech: SpeechBubble | null = null;
@@ -559,6 +560,7 @@ export class ScratchRuntime {
     this.sprite.direction = 90;
     this.sprite.size = 100;
     this.sprite.visible = true;
+    this.sprite.emoji = "\u{1F431}";
     this.sprite.speech = null;
     this.sprite.clearEffects();
     this.sprite.pen = { down: false, color: "#0000ff", size: 1 };

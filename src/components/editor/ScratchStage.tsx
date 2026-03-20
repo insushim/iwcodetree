@@ -131,7 +131,7 @@ export function ScratchStage({ width, height, runtime }: ScratchStageProps) {
         ctx.font = "36px serif";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText("\u{1F431}", 0, 0);
+        ctx.fillText(sp.emoji, 0, 0);
         ctx.restore();
 
         // Speech bubble

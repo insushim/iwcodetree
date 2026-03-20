@@ -18,7 +18,8 @@ export const COMMUNITY_PROJECTS: CommunityProject[] = [
     views: 128,
     thumbnail: "🚀",
     description: "방향키로 우주선을 조종하세요! 랜덤으로 점수가 올라갑니다.",
-    code: `sprite.goto(0, -120);
+    code: `sprite.emoji = "🚀";
+sprite.goto(0, -120);
 sprite.setSize(150);
 sprite.say('방향키로 움직여보세요!', 2);
 { const _end = performance.now() + 2000; while (performance.now() < _end) { yield; } }
@@ -45,7 +46,8 @@ while (true) {
     thumbnail: "🐱",
     description:
       "스페이스바로 점프! 좌우 방향키로 이동하며 최대 높이를 도전하세요.",
-    code: `sprite.goto(0, -100);
+    code: `sprite.emoji = "🐱";
+sprite.goto(0, -100);
 sprite.setSize(120);
 let vy = 0;
 let onGround = true;
@@ -80,7 +82,8 @@ while (true) {
     views: 84,
     thumbnail: "🏃",
     description: "방향키로 이동하여 오른쪽 위의 별까지 도착하세요!",
-    code: `sprite.goto(-180, -120);
+    code: `sprite.emoji = "🏃";
+sprite.goto(-180, -120);
 sprite.setSize(100);
 sprite.variables.set('이동횟수', 0);
 sprite.say('방향키로 오른쪽 위 별까지 이동하세요!', 3);
@@ -113,7 +116,8 @@ while (true) {
     views: 200,
     thumbnail: "🦖",
     description: "공룡이 자동으로 달리며 색이 변합니다! 가끔 점프도 해요.",
-    code: `sprite.setSize(130);
+    code: `sprite.emoji = "🦖";
+sprite.setSize(130);
 sprite.goto(-180, 0);
 sprite.setDirection(90);
 sprite.variables.set('거리', 0);
@@ -139,7 +143,8 @@ while (true) {
     views: 67,
     thumbnail: "🐠",
     description: "마우스를 움직여서 물고기를 조종하세요! 물방울도 나와요.",
-    code: `sprite.setSize(120);
+    code: `sprite.emoji = "🐠";
+sprite.setSize(120);
 sprite.say('마우스를 움직여보세요!', 2);
 { const _end = performance.now() + 2000; while (performance.now() < _end) { yield; } }
 sprite.variables.set('물고기속도', 5);
@@ -165,7 +170,8 @@ while (true) {
     views: 102,
     thumbnail: "🎵",
     description: "키보드 a~j 키로 도레미파솔라시를 연주하세요!",
-    code: `sprite.setSize(150);
+    code: `sprite.emoji = "🎵";
+sprite.setSize(150);
 sprite.say('키보드로 음악을 연주하세요! (a~g)', 3);
 { const _end = performance.now() + 3000; while (performance.now() < _end) { yield; } }
 sprite.variables.set('음표수', 0);
