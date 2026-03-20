@@ -85,23 +85,45 @@ export function ChallengePlayer({ challenge }: ChallengePlayerProps) {
     }
   }, []);
 
-  // Check goals - map each goal to required block types
-  const goalStatus = challenge.goals.map((goal, idx) => {
+  // Count how many required blocks are actually used
+  const usedRequiredCount = challenge.requiredBlockTypes.filter((bt) =>
+    usedBlocks.includes(bt),
+  ).length;
+  const totalRequired = challenge.requiredBlockTypes.length;
+
+  // Check goals based on type
+  const goalStatus = challenge.goals.map((goal) => {
     if (goal.check === "block_used") {
-      // Match goal to requiredBlockTypes by index
-      const bt = challenge.requiredBlockTypes[idx];
-      if (bt) return usedBlocks.includes(bt);
-      // Fallback: check if ANY required block is used that isn't matched yet
-      return challenge.requiredBlockTypes.some((r) => usedBlocks.includes(r));
+      // Each block_used goal requires a proportional number of required blocks
+      // Find which required block types this goal maps to by scanning goal description
+      // for block type names, or use proportional threshold
+      const blockTypeInDesc = challenge.requiredBlockTypes.find(
+        (bt) =>
+          goal.description.includes(bt) ||
+          goal.description.toLowerCase().includes(bt.replace(/_/g, " ")),
+      );
+      if (blockTypeInDesc) {
+        return usedBlocks.includes(blockTypeInDesc);
+      }
+      // Proportional: goal N of M requires N/M of required blocks to be used
+      const blockUsedGoals = challenge.goals.filter(
+        (g) => g.check === "block_used",
+      );
+      const goalIdx = blockUsedGoals.indexOf(goal);
+      const threshold = Math.ceil(
+        ((goalIdx + 1) / blockUsedGoals.length) * totalRequired,
+      );
+      return usedRequiredCount >= threshold;
     }
     if (goal.check === "block_count") {
-      // Extract number from goal description or default to 3
       const match = goal.description.match(/(\d+)/);
       const minCount = match ? parseInt(match[1]) : 3;
       return blockCount >= minCount;
     }
     if (goal.check === "block_connected") {
-      return blockCount >= 2;
+      // Require at least half the required blocks to be present and connected
+      const minRequired = Math.max(2, Math.ceil(totalRequired * 0.3));
+      return usedRequiredCount >= minRequired && blockCount >= minRequired;
     }
     return false;
   });
