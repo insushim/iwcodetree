@@ -56,7 +56,17 @@ export function registerBlocks(): void {
       this.appendDummyInput()
         .appendField("펜 색깔을")
         .appendField(
-          new (Blockly as any).FieldColour("#0000ff") as Blockly.Field,
+          new Blockly.FieldDropdown([
+            ["빨강", "#FF0000"],
+            ["주황", "#FF8800"],
+            ["노랑", "#FFFF00"],
+            ["초록", "#00CC00"],
+            ["파랑", "#0000FF"],
+            ["보라", "#8800FF"],
+            ["분홍", "#FF66CC"],
+            ["검정", "#000000"],
+            ["하양", "#FFFFFF"],
+          ]),
           "COLOR",
         )
         .appendField("(으)로 정하기");
