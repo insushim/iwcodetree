@@ -241,36 +241,39 @@ export function ChallengePlayer({ challenge }: ChallengePlayerProps) {
         </div>
       </div>
 
-      <div className="flex-1 flex gap-3 overflow-hidden">
-        {/* Left: Goals & Hints */}
-        <div className="w-72 flex-shrink-0 flex flex-col gap-3 overflow-y-auto">
+      <div className="flex-1 flex gap-2 overflow-hidden">
+        {/* Left: Compact Goals & Hints */}
+        <div className="w-52 flex-shrink-0 flex flex-col gap-2 overflow-y-auto">
           {/* Goals */}
-          <div className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-light)] p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <Target className="w-4 h-4 text-[var(--primary)]" />
-              <h3 className="font-bold text-sm">
+          <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-light)] p-3">
+            <div className="flex items-center gap-1.5 mb-2">
+              <Target className="w-3.5 h-3.5 text-[var(--primary)]" />
+              <h3 className="font-bold text-xs">
                 목표 ({completedGoals}/{challenge.goals.length})
               </h3>
+              <div className="ml-auto flex items-center gap-1 text-[10px] text-[var(--accent)] font-bold">
+                <Zap className="w-3 h-3" />+{challenge.xpReward}
+              </div>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               {challenge.goals.map((goal, i) => (
-                <div key={goal.id} className="flex items-start gap-2 text-sm">
+                <div key={goal.id} className="flex items-start gap-1.5 text-xs">
                   <div
-                    className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 transition-all"
+                    className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 transition-all"
                     style={{
                       background: goalStatus[i] ? "var(--primary)" : "#E2E8F0",
                     }}
                   >
                     {goalStatus[i] ? (
-                      <CheckCircle className="w-3 h-3 text-white" />
+                      <CheckCircle className="w-2.5 h-2.5 text-white" />
                     ) : (
-                      <span className="text-xs text-gray-500">{i + 1}</span>
+                      <span className="text-[10px] text-gray-500">{i + 1}</span>
                     )}
                   </div>
                   <span
                     className={
                       goalStatus[i]
-                        ? "text-[var(--text-2)] line-through"
+                        ? "text-[var(--text-3)] line-through"
                         : "text-[var(--text-1)]"
                     }
                   >
@@ -281,54 +284,67 @@ export function ChallengePlayer({ challenge }: ChallengePlayerProps) {
             </div>
           </div>
 
-          {/* Rewards */}
-          <div className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-light)] p-4">
-            <h3 className="font-bold text-sm mb-2">보상</h3>
-            <div className="flex gap-4 text-sm">
-              <span className="flex items-center gap-1 text-[var(--accent)] font-bold">
-                <Zap className="w-3.5 h-3.5" />+{challenge.xpReward} XP
-              </span>
-              <span className="text-[var(--secondary)] font-bold">
-                +{challenge.coinReward} 코인
-              </span>
+          {/* Required blocks - compact */}
+          <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-light)] p-3">
+            <h3 className="font-bold text-xs mb-1.5">필수 블록</h3>
+            <div className="space-y-1">
+              {challenge.requiredBlockTypes.map((bt) => {
+                const found = usedBlocks.includes(bt);
+                return (
+                  <div
+                    key={bt}
+                    className="flex items-center gap-1.5 text-[11px]"
+                  >
+                    <div
+                      className="w-3 h-3 rounded-full flex items-center justify-center"
+                      style={{ background: found ? "#10B981" : "#E2E8F0" }}
+                    >
+                      {found && <CheckCircle className="w-2 h-2 text-white" />}
+                    </div>
+                    <code className={found ? "text-[var(--text-3)]" : ""}>
+                      {bt}
+                    </code>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
-          {/* Hints */}
-          <div className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-light)] p-4">
+          {/* Hints - collapsible */}
+          <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-light)] p-3">
             <button
               onClick={() => setShowHints(!showHints)}
               className="flex items-center justify-between w-full"
             >
-              <div className="flex items-center gap-2">
-                <Lightbulb className="w-4 h-4 text-amber-500" />
-                <h3 className="font-bold text-sm">
-                  힌트 ({challenge.hints.length - revealedHints}개 남음)
+              <div className="flex items-center gap-1.5">
+                <Lightbulb className="w-3.5 h-3.5 text-amber-500" />
+                <h3 className="font-bold text-xs">
+                  힌트 ({challenge.hints.length - revealedHints}개)
                 </h3>
               </div>
               {showHints ? (
-                <ChevronUp className="w-4 h-4 text-[var(--text-3)]" />
+                <ChevronUp className="w-3.5 h-3.5 text-[var(--text-3)]" />
               ) : (
-                <ChevronDown className="w-4 h-4 text-[var(--text-3)]" />
+                <ChevronDown className="w-3.5 h-3.5 text-[var(--text-3)]" />
               )}
             </button>
             {showHints && (
-              <div className="mt-3 space-y-2">
+              <div className="mt-2 space-y-1.5">
                 {challenge.hints.map((hint, i) => (
                   <div key={i}>
                     {i < revealedHints ? (
-                      <p className="text-sm text-[var(--text-2)] bg-amber-50 rounded-lg p-2.5 border border-amber-100">
+                      <p className="text-[11px] text-[var(--text-2)] bg-amber-50 rounded p-2 border border-amber-100">
                         💡 {hint}
                       </p>
                     ) : i === revealedHints ? (
                       <button
                         onClick={() => setRevealedHints((r) => r + 1)}
-                        className="text-sm text-amber-600 hover:text-amber-700 font-medium"
+                        className="text-[11px] text-amber-600 hover:text-amber-700 font-medium"
                       >
                         힌트 {i + 1} 보기 →
                       </button>
                     ) : (
-                      <p className="text-sm text-[var(--text-3)]">
+                      <p className="text-[11px] text-[var(--text-3)]">
                         🔒 힌트 {i + 1}
                       </p>
                     )}
@@ -338,33 +354,16 @@ export function ChallengePlayer({ challenge }: ChallengePlayerProps) {
             )}
           </div>
 
-          {/* Block usage info */}
-          <div className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-light)] p-4">
-            <h3 className="font-bold text-sm mb-2">사용 중인 블록</h3>
-            <p className="text-2xl font-black text-[var(--primary)]">
+          {/* Block count */}
+          <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-light)] p-3 text-center">
+            <span className="text-xs text-[var(--text-3)]">사용 블록</span>
+            <p className="text-xl font-black text-[var(--primary)]">
               {blockCount}개
             </p>
-            {usedBlocks.length > 0 && (
-              <div className="mt-2 flex flex-wrap gap-1">
-                {usedBlocks.slice(0, 8).map((b) => (
-                  <span
-                    key={b}
-                    className="text-[10px] px-1.5 py-0.5 bg-[var(--bg-sidebar)] rounded text-[var(--text-3)]"
-                  >
-                    {b}
-                  </span>
-                ))}
-                {usedBlocks.length > 8 && (
-                  <span className="text-[10px] text-[var(--text-3)]">
-                    +{usedBlocks.length - 8}
-                  </span>
-                )}
-              </div>
-            )}
           </div>
         </div>
 
-        {/* Workspace */}
+        {/* Workspace - maximized */}
         <div className="flex-1 relative rounded-xl overflow-hidden border border-[var(--border-light)]">
           <BlockWorkspace
             spriteId="challenge_sprite"
@@ -372,35 +371,11 @@ export function ChallengePlayer({ challenge }: ChallengePlayerProps) {
           />
         </div>
 
-        {/* Stage */}
-        <div className="w-[300px] flex-shrink-0">
+        {/* Stage - compact right panel */}
+        <div className="w-[240px] flex-shrink-0">
           <div className="relative bg-white rounded-xl overflow-hidden border border-[var(--border-light)] shadow-sm">
-            <StageCanvas width={280} height={210} />
+            <StageCanvas width={220} height={165} />
             <StageOverlay />
-          </div>
-          {/* Required blocks summary */}
-          <div className="mt-3 bg-[var(--bg-card)] rounded-xl border border-[var(--border-light)] p-4">
-            <h3 className="font-bold text-sm mb-2">필수 블록</h3>
-            <div className="space-y-1.5">
-              {challenge.requiredBlockTypes.map((bt) => {
-                const found = usedBlocks.includes(bt);
-                return (
-                  <div key={bt} className="flex items-center gap-2 text-sm">
-                    <div
-                      className="w-4 h-4 rounded-full flex items-center justify-center"
-                      style={{
-                        background: found ? "#10B981" : "#E2E8F0",
-                      }}
-                    >
-                      {found && (
-                        <CheckCircle className="w-2.5 h-2.5 text-white" />
-                      )}
-                    </div>
-                    <code className="text-xs">{bt}</code>
-                  </div>
-                );
-              })}
-            </div>
           </div>
         </div>
       </div>
