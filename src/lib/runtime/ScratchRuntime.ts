@@ -451,10 +451,24 @@ export class SoundEngine {
 
 export type RenderCallback = () => void;
 
+export interface GameObject {
+  id: string;
+  emoji: string;
+  x: number;
+  y: number;
+  size?: number;
+  direction?: number;
+  visible?: boolean;
+}
+
 export class ScratchRuntime {
   sprite: Sprite;
   stage: StageState;
   soundEngine: SoundEngine;
+  /** Extra game objects rendered on the stage (enemies, items, bullets, etc.) */
+  gameObjects: GameObject[] = [];
+  /** Background color or gradient key */
+  bgColor: string = "";
 
   // ask UI state (read by ScratchStage component)
   askActive = false;
@@ -549,6 +563,8 @@ export class ScratchRuntime {
     this.askActive = false;
     if (resetSprite) {
       this.resetSprite();
+      this.gameObjects = [];
+      this.bgColor = "";
       this.penCtx.clearRect(0, 0, 480, 360);
       this.renderCb?.();
     }

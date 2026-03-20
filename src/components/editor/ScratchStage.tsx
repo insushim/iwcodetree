@@ -99,22 +99,45 @@ export function ScratchStage({ width, height, runtime }: ScratchStageProps) {
         ctx.stroke();
       }
 
-      // Center crosshair (dashed)
-      ctx.strokeStyle = "#ccc";
-      ctx.lineWidth = 1;
-      ctx.setLineDash([4, 4]);
-      ctx.beginPath();
-      ctx.moveTo(STAGE_W / 2, 0);
-      ctx.lineTo(STAGE_W / 2, STAGE_H);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(0, STAGE_H / 2);
-      ctx.lineTo(STAGE_W, STAGE_H / 2);
-      ctx.stroke();
-      ctx.setLineDash([]);
+      // Custom background
+      if (runtime.bgColor) {
+        ctx.fillStyle = runtime.bgColor;
+        ctx.fillRect(0, 0, STAGE_W, STAGE_H);
+      } else {
+        // Center crosshair (dashed)
+        ctx.strokeStyle = "#ccc";
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(STAGE_W / 2, 0);
+        ctx.lineTo(STAGE_W / 2, STAGE_H);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(0, STAGE_H / 2);
+        ctx.lineTo(STAGE_W, STAGE_H / 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
 
       // Pen trails
       ctx.drawImage(runtime.penCanvas, 0, 0);
+
+      // Game objects (enemies, items, bullets, etc.)
+      for (const obj of runtime.gameObjects) {
+        if (obj.visible === false) continue;
+        const ox = obj.x + STAGE_W / 2;
+        const oy = STAGE_H / 2 - obj.y;
+        const os = (obj.size || 100) / 100;
+        ctx.save();
+        ctx.translate(ox, oy);
+        if (obj.direction) ctx.rotate(((obj.direction - 90) * Math.PI) / 180);
+        ctx.scale(os, os);
+        ctx.font = "36px serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(obj.emoji, 0, 0);
+        ctx.restore();
+      }
 
       // Sprite
       const sp = runtime.sprite;
