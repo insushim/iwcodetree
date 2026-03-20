@@ -31,7 +31,13 @@ export function registerBlocks(): void {
       this.appendDummyInput()
         .appendField("")
         .appendField(
-          new (Blockly as any).FieldColour("#ff0000") as Blockly.Field,
+          new Blockly.FieldDropdown([
+            ["빨강", "#FF0000"],
+            ["파랑", "#0000FF"],
+            ["초록", "#00CC00"],
+            ["노랑", "#FFFF00"],
+            ["검정", "#000000"],
+          ]),
           "COLOR",
         )
         .appendField("색에 닿았는가?");
