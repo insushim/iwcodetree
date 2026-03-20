@@ -3,8 +3,8 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { BlockWorkspace } from "@/components/editor/BlockWorkspace";
-import { StageCanvas } from "@/components/editor/StageCanvas";
-import { StageOverlay } from "@/components/editor/StageOverlay";
+import { ScratchStage } from "@/components/editor/ScratchStage";
+import { ScratchRuntime } from "@/lib/runtime/ScratchRuntime";
 import { Button } from "@/components/ui/Button";
 import { CompletionCelebration } from "@/components/learn/CompletionCelebration";
 import {
@@ -40,6 +40,8 @@ export function ChallengePlayer({ challenge }: ChallengePlayerProps) {
   const [showCelebration, setShowCelebration] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [runtimeInstance] = useState(() => new ScratchRuntime());
+  const workspaceRef = useRef<any>(null);
 
   const { startChallenge, completeChallenge, completedChallenges } =
     useChallengeStore();
@@ -47,12 +49,13 @@ export function ChallengePlayer({ challenge }: ChallengePlayerProps) {
 
   const isAlreadyCompleted = !!completedChallenges[challenge.id];
 
-  // Timer
+  // Timer + cleanup
   useEffect(() => {
     timerRef.current = setInterval(() => setElapsed((e) => e + 1), 1000);
     startChallenge(challenge.id);
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
+      runtimeInstance.stop();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [challenge.id]);
@@ -238,7 +241,12 @@ export function ChallengePlayer({ challenge }: ChallengePlayerProps) {
               size="sm"
               variant="secondary"
               icon={<Play className="w-4 h-4" />}
-              onClick={() => setRunning(true)}
+              onClick={() => {
+                if (workspaceRef.current) {
+                  runtimeInstance.start("", workspaceRef.current);
+                  setRunning(true);
+                }
+              }}
             >
               실행
             </Button>
@@ -247,7 +255,10 @@ export function ChallengePlayer({ challenge }: ChallengePlayerProps) {
               size="sm"
               variant="danger"
               icon={<Square className="w-4 h-4" />}
-              onClick={() => setRunning(false)}
+              onClick={() => {
+                runtimeInstance.stop();
+                setRunning(false);
+              }}
             >
               정지
             </Button>
@@ -390,14 +401,16 @@ export function ChallengePlayer({ challenge }: ChallengePlayerProps) {
           <BlockWorkspace
             spriteId="challenge_sprite"
             onCodeChange={handleCodeChange}
+            onWorkspaceReady={(ws) => {
+              workspaceRef.current = ws;
+            }}
           />
         </div>
 
         {/* Stage - compact right panel */}
-        <div className="w-[240px] flex-shrink-0">
+        <div className="w-[280px] flex-shrink-0">
           <div className="relative bg-white rounded-xl overflow-hidden border border-[var(--border-light)] shadow-sm">
-            <StageCanvas width={220} height={165} />
-            <StageOverlay />
+            <ScratchStage width={260} height={195} runtime={runtimeInstance} />
           </div>
         </div>
       </div>

@@ -5,6 +5,7 @@ import { useEffect, useRef, useCallback } from "react";
 interface BlockWorkspaceProps {
   spriteId: string;
   onCodeChange: (code: string) => void;
+  onWorkspaceReady?: (ws: any) => void;
 }
 
 const spriteXmlMap = new Map<string, string>();
@@ -12,6 +13,7 @@ const spriteXmlMap = new Map<string, string>();
 export function BlockWorkspace({
   spriteId,
   onCodeChange,
+  onWorkspaceReady,
 }: BlockWorkspaceProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const workspaceRef = useRef<any>(null);
@@ -81,6 +83,7 @@ export function BlockWorkspace({
         });
 
         workspaceRef.current = ws;
+        onWorkspaceReady?.(ws);
         loadXmlForSprite(currentSpriteRef.current);
 
         ws.addChangeListener(() => {
