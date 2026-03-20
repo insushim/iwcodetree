@@ -498,7 +498,13 @@ export class ScratchRuntime {
 
     for (const block of topBlocks) {
       const eventInfo = this.getEventInfo(block);
-      if (!eventInfo) continue;
+
+      // If not an event hat block, treat entire chain as flag_clicked
+      if (!eventInfo) {
+        const code = this.generateChainCode(block, workspace);
+        if (code.trim()) this.spawnThread(code);
+        continue;
+      }
 
       // Generate code for the body (blocks connected below the hat)
       const bodyBlock = block.getNextBlock();
