@@ -292,39 +292,122 @@ export class SoundEngine {
   }
 
   playSound(name: string): void {
+    if (name === "meow") {
+      this.playMeow();
+      return;
+    }
     const ctx = this.getCtx();
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
-    gain.gain.value = (this.volume / 100) * 0.3;
+    const vol = (this.volume / 100) * 0.3;
+    gain.gain.value = vol;
     osc.connect(gain);
     gain.connect(ctx.destination);
+    const t = ctx.currentTime;
 
-    // Simple synth sounds based on name
     const presets: Record<
       string,
       { freq: number; type: OscillatorType; dur: number }
     > = {
-      meow: { freq: 800, type: "sawtooth", dur: 0.3 },
-      pop: { freq: 400, type: "sine", dur: 0.1 },
-      ding: { freq: 1200, type: "sine", dur: 0.4 },
-      boing: { freq: 300, type: "triangle", dur: 0.3 },
+      pop: { freq: 400, type: "sine", dur: 0.08 },
+      ding: { freq: 1200, type: "sine", dur: 0.5 },
+      boing: { freq: 300, type: "sine", dur: 0.35 },
       buzz: { freq: 150, type: "square", dur: 0.2 },
-      click: { freq: 1000, type: "square", dur: 0.05 },
-      drum: { freq: 100, type: "triangle", dur: 0.15 },
+      click: { freq: 1000, type: "square", dur: 0.03 },
+      drum: { freq: 80, type: "triangle", dur: 0.12 },
     };
     const p = presets[name] || presets.pop;
     osc.type = p.type;
-    osc.frequency.setValueAtTime(p.freq, ctx.currentTime);
-    if (name === "meow") {
-      osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + p.dur);
-    }
+    osc.frequency.setValueAtTime(p.freq, t);
     if (name === "boing") {
-      osc.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.1);
-      osc.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + p.dur);
+      osc.frequency.exponentialRampToValueAtTime(600, t + 0.08);
+      osc.frequency.exponentialRampToValueAtTime(200, t + p.dur);
     }
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + p.dur);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + p.dur + 0.05);
+    if (name === "drum") {
+      osc.frequency.exponentialRampToValueAtTime(30, t + p.dur);
+    }
+    gain.gain.exponentialRampToValueAtTime(0.001, t + p.dur);
+    osc.start(t);
+    osc.stop(t + p.dur + 0.05);
+  }
+
+  /** Meow: two-tone FM synth that sounds like a cat */
+  private playMeow(): void {
+    const ctx = this.getCtx();
+    const t = ctx.currentTime;
+    const vol = (this.volume / 100) * 0.25;
+
+    // Carrier oscillator - sine wave for the main tone
+    const carrier = ctx.createOscillator();
+    const carrierGain = ctx.createGain();
+    carrier.type = "sine";
+    // "me" part: start high, slide up
+    carrier.frequency.setValueAtTime(700, t);
+    carrier.frequency.linearRampToValueAtTime(900, t + 0.15);
+    // "ow" part: slide down
+    carrier.frequency.linearRampToValueAtTime(600, t + 0.35);
+    carrier.frequency.linearRampToValueAtTime(500, t + 0.5);
+
+    // Modulator for vibrato/texture
+    const mod = ctx.createOscillator();
+    const modGain = ctx.createGain();
+    mod.type = "sine";
+    mod.frequency.value = 5; // vibrato
+    modGain.gain.value = 15;
+    mod.connect(modGain);
+    modGain.connect(carrier.frequency);
+
+    // Envelope: attack + sustain + decay
+    carrierGain.gain.setValueAtTime(0, t);
+    carrierGain.gain.linearRampToValueAtTime(vol, t + 0.04);
+    carrierGain.gain.setValueAtTime(vol, t + 0.3);
+    carrierGain.gain.linearRampToValueAtTime(0, t + 0.55);
+
+    // Second harmonic for richness
+    const harm = ctx.createOscillator();
+    const harmGain = ctx.createGain();
+    harm.type = "sine";
+    harm.frequency.setValueAtTime(1400, t);
+    harm.frequency.linearRampToValueAtTime(1800, t + 0.15);
+    harm.frequency.linearRampToValueAtTime(1200, t + 0.35);
+    harm.frequency.linearRampToValueAtTime(1000, t + 0.5);
+    harmGain.gain.setValueAtTime(0, t);
+    harmGain.gain.linearRampToValueAtTime(vol * 0.3, t + 0.04);
+    harmGain.gain.linearRampToValueAtTime(0, t + 0.5);
+
+    // Noise burst for the attack "m" consonant
+    const bufferSize = ctx.sampleRate * 0.04;
+    const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++)
+      data[i] = (Math.random() * 2 - 1) * 0.3;
+    const noise = ctx.createBufferSource();
+    noise.buffer = noiseBuffer;
+    const noiseGain = ctx.createGain();
+    noiseGain.gain.setValueAtTime(vol * 0.5, t);
+    noiseGain.gain.linearRampToValueAtTime(0, t + 0.04);
+    const noiseFilt = ctx.createBiquadFilter();
+    noiseFilt.type = "bandpass";
+    noiseFilt.frequency.value = 800;
+    noiseFilt.Q.value = 2;
+
+    // Connect
+    carrier.connect(carrierGain);
+    carrierGain.connect(ctx.destination);
+    harm.connect(harmGain);
+    harmGain.connect(ctx.destination);
+    noise.connect(noiseFilt);
+    noiseFilt.connect(noiseGain);
+    noiseGain.connect(ctx.destination);
+
+    carrier.start(t);
+    carrier.stop(t + 0.6);
+    mod.start(t);
+    mod.stop(t + 0.6);
+    harm.start(t);
+    harm.stop(t + 0.55);
+    noise.start(t);
+    noise.stop(t + 0.05);
   }
 
   playNote(midiNote: number, durationSecs: number): void {
@@ -499,12 +582,7 @@ export class ScratchRuntime {
     for (const block of topBlocks) {
       const eventInfo = this.getEventInfo(block);
 
-      // If not an event hat block, treat entire chain as flag_clicked
-      if (!eventInfo) {
-        const code = this.generateChainCode(block, workspace);
-        if (code.trim()) this.spawnThread(code);
-        continue;
-      }
+      if (!eventInfo) continue;
 
       // Generate code for the body (blocks connected below the hat)
       const bodyBlock = block.getNextBlock();
