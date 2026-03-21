@@ -18,12 +18,11 @@ export function BlockWorkspace({
   const containerRef = useRef<HTMLDivElement>(null);
   const workspaceRef = useRef<any>(null);
   const currentSpriteRef = useRef(spriteId);
-  const blocklyRef = useRef<any>(null);
 
   const saveCurrentXml = useCallback(() => {
     if (workspaceRef.current) {
       try {
-        const Blockly = blocklyRef.current;
+        const Blockly = (window as any).__Blockly;
         if (Blockly) {
           const xml = Blockly.Xml.workspaceToDom(workspaceRef.current);
           const xmlText = Blockly.Xml.domToText(xml);
@@ -38,7 +37,7 @@ export function BlockWorkspace({
   const loadXmlForSprite = useCallback((sid: string) => {
     if (workspaceRef.current) {
       try {
-        const Blockly = blocklyRef.current;
+        const Blockly = (window as any).__Blockly;
         if (Blockly) {
           workspaceRef.current.clear();
           const xmlText = spriteXmlMap.get(sid);
@@ -57,12 +56,10 @@ export function BlockWorkspace({
     if (!containerRef.current) return;
 
     let ws: any = null;
-    let resizeObserver: ResizeObserver | null = null;
 
     const init = async () => {
       try {
         const Blockly = await import("blockly");
-        blocklyRef.current = Blockly;
         (window as any).__Blockly = Blockly;
 
         const { initBlockly, toolbox } = await import("@/lib/blockly/setup");
@@ -74,7 +71,7 @@ export function BlockWorkspace({
           zoom: {
             controls: true,
             wheel: true,
-            startScale: 1.0,
+            startScale: 0.85,
             maxScale: 2,
             minScale: 0.3,
           },
@@ -84,44 +81,15 @@ export function BlockWorkspace({
         });
 
         workspaceRef.current = ws;
-
-        // Critical: resize Blockly SVG to match container after layout settles
-        Blockly.svgResize(ws);
-        // Also resize after a short delay to catch late layout changes
-        setTimeout(() => Blockly.svgResize(ws), 100);
-        setTimeout(() => Blockly.svgResize(ws), 500);
-
-        // Watch for container size changes
-        resizeObserver = new ResizeObserver(() => {
-          if (workspaceRef.current) {
-            Blockly.svgResize(workspaceRef.current);
-          }
-        });
-        resizeObserver.observe(containerRef.current!);
-
-        // Also handle window resize
-        const handleResize = () => {
-          if (workspaceRef.current) {
-            Blockly.svgResize(workspaceRef.current);
-          }
-        };
-        window.addEventListener("resize", handleResize);
-
         onWorkspaceReady?.(ws);
         loadXmlForSprite(currentSpriteRef.current);
 
-        ws.addChangeListener((event: any) => {
-          // When a block is created (dragged from flyout), scroll to show it
-          if (event.type === Blockly.Events.BLOCK_CREATE && event.blockId) {
-            setTimeout(() => {
-              try {
-                ws.centerOnBlock(event.blockId);
-              } catch {
-                /* block might not exist */
-              }
-            }, 50);
-          }
+        // Resize after layout settles
+        requestAnimationFrame(() => {
+          Blockly.svgResize(ws);
+        });
 
+        ws.addChangeListener(() => {
           try {
             const { generateCode } = require("@/lib/blockly/generator");
             if (generateCode) {
@@ -132,9 +100,6 @@ export function BlockWorkspace({
             // Code generation not available yet
           }
         });
-
-        // Store cleanup for window resize
-        (containerRef.current as any).__resizeHandler = handleResize;
       } catch (err) {
         console.error("Failed to load Blockly:", err);
       }
@@ -143,11 +108,6 @@ export function BlockWorkspace({
     init();
 
     return () => {
-      if (resizeObserver) resizeObserver.disconnect();
-      if (containerRef.current) {
-        const handler = (containerRef.current as any).__resizeHandler;
-        if (handler) window.removeEventListener("resize", handler);
-      }
       if (ws) {
         try {
           ws.dispose();
@@ -169,8 +129,7 @@ export function BlockWorkspace({
   return (
     <div
       ref={containerRef}
-      className="absolute inset-0"
-      style={{ minHeight: 400 }}
+      style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
     />
   );
 }
