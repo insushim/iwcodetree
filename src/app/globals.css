@@ -247,7 +247,6 @@ code, pre { font-family: 'Fira Code', monospace; }
 .blocklyToolboxDiv {
   background: #F8FAFC !important;
   padding: 8px 0 !important;
-  width: 120px !important;
   border-right: 1px solid #E2E8F0 !important;
 }
 
@@ -257,9 +256,13 @@ code, pre { font-family: 'Fira Code', monospace; }
   filter: drop-shadow(0 2px 8px rgba(0,0,0,0.04)) !important;
 }
 
-.blocklyScrollbarVertical,
-.blocklyScrollbarHorizontal {
-  display: none !important;
+.blocklyScrollbarVertical .blocklyScrollbarHandle,
+.blocklyScrollbarHorizontal .blocklyScrollbarHandle {
+  fill: #CBD5E1 !important;
+  rx: 3 !important;
+}
+.blocklyScrollbarBackground {
+  opacity: 0 !important;
 }
 
 /* Custom utility classes */
