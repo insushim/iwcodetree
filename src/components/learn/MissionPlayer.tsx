@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, useRef } from "react";
 import { StepGuidePanel } from "./StepGuidePanel";
 import { HintSystem } from "./HintSystem";
 import { MissionTimer } from "./MissionTimer";
@@ -33,10 +33,54 @@ const fallbackMission = {
 
 export function MissionPlayer({ missionId }: MissionPlayerProps) {
   const [currentStep, setCurrentStep] = useState(0);
+  const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
   const [running, setRunning] = useState(false);
   const [, setCode] = useState("");
+  const workspaceRef = useRef<any>(null);
+  const hasBlocksRef = useRef(false);
 
   const mission = missionData[missionId] ?? fallbackMission;
+
+  // Track workspace changes to auto-advance steps
+  const handleCodeChange = useCallback(
+    (code: string) => {
+      setCode(code);
+      const blockCount = workspaceRef.current
+        ? workspaceRef.current.getAllBlocks(false).length
+        : 0;
+
+      // Step 1: User opened a category (detected by having workspace ready)
+      if (workspaceRef.current && !completedSteps.has(0)) {
+        setCompletedSteps((prev) => new Set(prev).add(0));
+        setCurrentStep(1);
+      }
+
+      // Step 2: User placed a block in the workspace
+      if (blockCount > 0 && !hasBlocksRef.current) {
+        hasBlocksRef.current = true;
+        setCompletedSteps((prev) => new Set(prev).add(1));
+        setCurrentStep(2);
+      }
+
+      if (blockCount === 0) {
+        hasBlocksRef.current = false;
+      }
+    },
+    [completedSteps],
+  );
+
+  const handleWorkspaceReady = useCallback((ws: any) => {
+    workspaceRef.current = ws;
+  }, []);
+
+  const handleRun = () => {
+    setRunning(true);
+    // Step 3: User ran the code
+    if (!completedSteps.has(2)) {
+      setCompletedSteps((prev) => new Set(prev).add(2));
+    }
+    setCurrentStep(2);
+  };
 
   return (
     <div className="h-[calc(100vh-theme(spacing.14)-theme(spacing.12))] flex flex-col">
@@ -59,7 +103,7 @@ export function MissionPlayer({ missionId }: MissionPlayerProps) {
               size="sm"
               variant="secondary"
               icon={<Play className="w-4 h-4" />}
-              onClick={() => setRunning(true)}
+              onClick={handleRun}
             >
               실행
             </Button>
@@ -85,6 +129,7 @@ export function MissionPlayer({ missionId }: MissionPlayerProps) {
           <StepGuidePanel
             steps={[...mission.steps]}
             currentStep={currentStep}
+            completedSteps={completedSteps}
             onStepChange={setCurrentStep}
           />
           <div className="mt-3">
@@ -94,7 +139,11 @@ export function MissionPlayer({ missionId }: MissionPlayerProps) {
 
         {/* Workspace */}
         <div className="flex-1 relative rounded-xl overflow-hidden border border-[var(--border-light)]">
-          <BlockWorkspace spriteId="sprite_1" onCodeChange={setCode} />
+          <BlockWorkspace
+            spriteId="sprite_1"
+            onCodeChange={handleCodeChange}
+            onWorkspaceReady={handleWorkspaceReady}
+          />
         </div>
 
         {/* Stage */}

@@ -11,12 +11,14 @@ interface Step {
 interface StepGuidePanelProps {
   steps: Step[];
   currentStep: number;
+  completedSteps?: Set<number>;
   onStepChange: (step: number) => void;
 }
 
 export function StepGuidePanel({
   steps,
   currentStep,
+  completedSteps = new Set(),
   onStepChange,
 }: StepGuidePanelProps) {
   return (
@@ -35,13 +37,13 @@ export function StepGuidePanel({
             className={`w-full flex items-start gap-3 p-3 rounded-lg text-left transition-all ${
               i === currentStep
                 ? "bg-[var(--primary)]/5 border border-[var(--primary)]/20"
-                : i < currentStep
-                  ? "opacity-60"
+                : completedSteps.has(i)
+                  ? "opacity-70"
                   : "opacity-40"
             }`}
           >
             <div className="mt-0.5">
-              {i < currentStep ? (
+              {completedSteps.has(i) ? (
                 <CheckCircle className="w-5 h-5 text-[var(--secondary)]" />
               ) : (
                 <Circle

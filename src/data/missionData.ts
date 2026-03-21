@@ -32,7 +32,7 @@ export const missionData: Record<string, MissionInfo> = {
       {
         id: "s2",
         title: "블록 끌어다 놓기",
-        desc: "'10만큼 움직이기' 블록을 작업 공간으로 끌어다 놓으세요.",
+        desc: "'걸음 이동하기' 블록을 작업 공간으로 끌어다 놓으세요.",
       },
       {
         id: "s3",
@@ -42,7 +42,7 @@ export const missionData: Record<string, MissionInfo> = {
     ],
     hints: [
       "왼쪽에 있는 블록 카테고리 중 '동작'을 찾아보세요",
-      "'10만큼 움직이기' 블록을 드래그해서 가운데 작업 공간에 놓으세요",
+      "'걸음 이동하기' 블록을 드래그해서 가운데 작업 공간에 놓으세요",
       "블록을 놓은 뒤 상단의 실행 버튼을 클릭하면 고양이가 오른쪽으로 움직여요!",
     ],
   },
@@ -222,7 +222,7 @@ export const missionData: Record<string, MissionInfo> = {
     ],
     hints: [
       "'제어' 카테고리에 반복 관련 블록이 있어요",
-      "반복 블록의 입 안에 '10만큼 움직이기' 블록을 끌어 넣으세요",
+      "반복 블록의 입 안에 '걸음 이동하기' 블록을 끌어 넣으세요",
       "10번 반복하면 10×10 = 100만큼 움직여요. 횟수를 늘려보세요!",
     ],
   },
@@ -267,7 +267,7 @@ export const missionData: Record<string, MissionInfo> = {
       {
         id: "s1",
         title: "공 움직이기",
-        desc: "무한 반복 안에 '10만큼 움직이기' 블록을 넣으세요.",
+        desc: "무한 반복 안에 '걸음 이동하기' 블록을 넣으세요.",
       },
       {
         id: "s2",
