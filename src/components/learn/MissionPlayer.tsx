@@ -10,33 +10,33 @@ import { StageOverlay } from "@/components/editor/StageOverlay";
 import { Button } from "@/components/ui/Button";
 import { ArrowLeft, Play, Square, CheckCircle } from "lucide-react";
 import Link from "next/link";
+import { missionData } from "@/data/missionData";
 
 interface MissionPlayerProps {
   missionId: string;
 }
 
-const steps = [
-  {
-    id: "s1",
-    title: "스프라이트 확인하기",
-    desc: "오른쪽 스테이지에서 고양이 스프라이트를 확인하세요.",
-  },
-  {
-    id: "s2",
-    title: "동작 블록 추가",
-    desc: "'10만큼 움직이기' 블록을 작업 공간에 끌어다 놓으세요.",
-  },
-  {
-    id: "s3",
-    title: "실행하기",
-    desc: "초록색 깃발을 클릭해서 결과를 확인하세요!",
-  },
-];
+const fallbackMission = {
+  title: "알 수 없는 미션",
+  desc: "미션 정보를 불러올 수 없습니다.",
+  steps: [
+    { id: "s1", title: "준비", desc: "미션을 준비하세요." },
+    { id: "s2", title: "실행", desc: "블록을 조립하고 실행하세요." },
+    { id: "s3", title: "확인", desc: "결과를 확인하세요." },
+  ] as const,
+  hints: [
+    "블록 팔레트에서 블록을 찾아보세요",
+    "블록을 작업 공간에 끌어다 놓으세요",
+    "실행 버튼을 눌러 결과를 확인하세요",
+  ] as [string, string, string],
+};
 
 export function MissionPlayer({ missionId }: MissionPlayerProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [running, setRunning] = useState(false);
   const [, setCode] = useState("");
+
+  const mission = missionData[missionId] ?? fallbackMission;
 
   return (
     <div className="h-[calc(100vh-theme(spacing.14)-theme(spacing.12))] flex flex-col">
@@ -49,10 +49,8 @@ export function MissionPlayer({ missionId }: MissionPlayerProps) {
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <div className="flex-1">
-          <h1 className="text-lg font-bold">미션: 반복의 마법</h1>
-          <p className="text-xs text-[var(--text-3)]">
-            반복 블록으로 같은 동작을 여러 번 실행해보세요
-          </p>
+          <h1 className="text-lg font-bold">미션: {mission.title}</h1>
+          <p className="text-xs text-[var(--text-3)]">{mission.desc}</p>
         </div>
         <MissionTimer />
         <div className="flex gap-2">
@@ -85,18 +83,12 @@ export function MissionPlayer({ missionId }: MissionPlayerProps) {
         {/* Guide Panel */}
         <div className="w-72 flex-shrink-0">
           <StepGuidePanel
-            steps={steps}
+            steps={[...mission.steps]}
             currentStep={currentStep}
             onStepChange={setCurrentStep}
           />
           <div className="mt-3">
-            <HintSystem
-              hints={[
-                "'동작' 카테고리에서 블록을 찾아보세요",
-                "'10만큼 움직이기' 블록을 사용하세요",
-                "반복 블록 안에 움직이기 블록을 넣으면 여러 번 움직여요",
-              ]}
-            />
+            <HintSystem hints={[...mission.hints]} />
           </div>
         </div>
 
