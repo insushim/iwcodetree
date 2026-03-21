@@ -125,7 +125,7 @@ export function MissionPlayer({ missionId }: MissionPlayerProps) {
 
       <div className="flex-1 flex gap-4 overflow-hidden">
         {/* Main Workspace Area */}
-        <div className="flex-1 relative rounded-xl overflow-hidden border border-[var(--border-light)]">
+        <div className="flex-1 relative">
           <BlockWorkspace
             spriteId="sprite_1"
             onCodeChange={handleCodeChange}
