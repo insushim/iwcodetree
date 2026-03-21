@@ -83,7 +83,7 @@ export function MissionPlayer({ missionId }: MissionPlayerProps) {
   };
 
   return (
-    <div className="h-[calc(100vh-theme(spacing.14)-theme(spacing.12))] flex flex-col">
+    <div className="h-[calc(100vh-theme(spacing.14)-theme(spacing.8))] flex flex-col">
       {/* Header */}
       <div className="flex items-center gap-4 mb-4">
         <Link
@@ -125,7 +125,7 @@ export function MissionPlayer({ missionId }: MissionPlayerProps) {
 
       <div className="flex-1 flex gap-4 overflow-hidden">
         {/* Main Workspace Area */}
-        <div className="flex-1 relative rounded-xl border border-[var(--border-light)]">
+        <div className="flex-1 relative rounded-xl overflow-hidden border border-[var(--border-light)]">
           <BlockWorkspace
             spriteId="sprite_1"
             onCodeChange={handleCodeChange}
