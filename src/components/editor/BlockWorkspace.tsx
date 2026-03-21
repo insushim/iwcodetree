@@ -110,7 +110,18 @@ export function BlockWorkspace({
         onWorkspaceReady?.(ws);
         loadXmlForSprite(currentSpriteRef.current);
 
-        ws.addChangeListener(() => {
+        ws.addChangeListener((event: any) => {
+          // When a block is created (dragged from flyout), scroll to show it
+          if (event.type === Blockly.Events.BLOCK_CREATE && event.blockId) {
+            setTimeout(() => {
+              try {
+                ws.centerOnBlock(event.blockId);
+              } catch {
+                /* block might not exist */
+              }
+            }, 50);
+          }
+
           try {
             const { generateCode } = require("@/lib/blockly/generator");
             if (generateCode) {
