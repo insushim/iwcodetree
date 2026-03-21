@@ -18,11 +18,12 @@ export function BlockWorkspace({
   const containerRef = useRef<HTMLDivElement>(null);
   const workspaceRef = useRef<any>(null);
   const currentSpriteRef = useRef(spriteId);
+  const blocklyRef = useRef<any>(null);
 
   const saveCurrentXml = useCallback(() => {
     if (workspaceRef.current) {
       try {
-        const Blockly = (window as any).__Blockly;
+        const Blockly = blocklyRef.current;
         if (Blockly) {
           const xml = Blockly.Xml.workspaceToDom(workspaceRef.current);
           const xmlText = Blockly.Xml.domToText(xml);
@@ -37,7 +38,7 @@ export function BlockWorkspace({
   const loadXmlForSprite = useCallback((sid: string) => {
     if (workspaceRef.current) {
       try {
-        const Blockly = (window as any).__Blockly;
+        const Blockly = blocklyRef.current;
         if (Blockly) {
           workspaceRef.current.clear();
           const xmlText = spriteXmlMap.get(sid);
@@ -56,14 +57,14 @@ export function BlockWorkspace({
     if (!containerRef.current) return;
 
     let ws: any = null;
+    let resizeObserver: ResizeObserver | null = null;
 
     const init = async () => {
       try {
-        // Import Blockly and our setup
         const Blockly = await import("blockly");
+        blocklyRef.current = Blockly;
         (window as any).__Blockly = Blockly;
 
-        // Import and run our custom block registration + toolbox
         const { initBlockly, toolbox } = await import("@/lib/blockly/setup");
         initBlockly();
 
@@ -73,7 +74,7 @@ export function BlockWorkspace({
           zoom: {
             controls: true,
             wheel: true,
-            startScale: 0.85,
+            startScale: 1.0,
             maxScale: 2,
             minScale: 0.3,
           },
@@ -83,12 +84,34 @@ export function BlockWorkspace({
         });
 
         workspaceRef.current = ws;
+
+        // Critical: resize Blockly SVG to match container after layout settles
+        Blockly.svgResize(ws);
+        // Also resize after a short delay to catch late layout changes
+        setTimeout(() => Blockly.svgResize(ws), 100);
+        setTimeout(() => Blockly.svgResize(ws), 500);
+
+        // Watch for container size changes
+        resizeObserver = new ResizeObserver(() => {
+          if (workspaceRef.current) {
+            Blockly.svgResize(workspaceRef.current);
+          }
+        });
+        resizeObserver.observe(containerRef.current!);
+
+        // Also handle window resize
+        const handleResize = () => {
+          if (workspaceRef.current) {
+            Blockly.svgResize(workspaceRef.current);
+          }
+        };
+        window.addEventListener("resize", handleResize);
+
         onWorkspaceReady?.(ws);
         loadXmlForSprite(currentSpriteRef.current);
 
         ws.addChangeListener(() => {
           try {
-            // Try to generate code from our custom generator
             const { generateCode } = require("@/lib/blockly/generator");
             if (generateCode) {
               const code = generateCode(ws);
@@ -98,6 +121,9 @@ export function BlockWorkspace({
             // Code generation not available yet
           }
         });
+
+        // Store cleanup for window resize
+        (containerRef.current as any).__resizeHandler = handleResize;
       } catch (err) {
         console.error("Failed to load Blockly:", err);
       }
@@ -106,6 +132,11 @@ export function BlockWorkspace({
     init();
 
     return () => {
+      if (resizeObserver) resizeObserver.disconnect();
+      if (containerRef.current) {
+        const handler = (containerRef.current as any).__resizeHandler;
+        if (handler) window.removeEventListener("resize", handler);
+      }
       if (ws) {
         try {
           ws.dispose();
