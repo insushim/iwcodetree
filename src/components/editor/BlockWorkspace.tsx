@@ -78,7 +78,7 @@ export function BlockWorkspace({
             minScale: 0.3,
           },
           trashcan: true,
-          move: { scrollbars: false, drag: true, wheel: true },
+          move: { scrollbars: true, drag: true, wheel: true },
           renderer: "zelos",
         });
 
