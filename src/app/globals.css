@@ -197,9 +197,70 @@ code, pre { font-family: 'Fira Code', monospace; }
 /* Blockly overrides */
 .blocklySvg { background: #FAFBFE !important; }
 .blocklyMainBackground { stroke: none !important; }
-.blocklyToolboxDiv { background: #F1F5F9 !important; padding: 8px 0; }
-.blocklyTreeRow:hover { background: rgba(99,102,241,0.08) !important; }
-.blocklyFlyoutBackground { fill: #FFFFFF !important; fill-opacity: 0.98 !important; }
+
+/* Blockly toolbox improvements */
+.blocklyToolboxCategory {
+  margin: 2px 4px !important;
+  padding: 0 !important;
+}
+
+.blocklyTreeRow {
+  height: auto !important;
+  padding: 10px 12px !important;
+  margin: 2px 6px !important;
+  border-radius: 10px !important;
+  transition: all 0.15s ease !important;
+}
+
+.blocklyTreeRow:hover {
+  background: rgba(99,102,241,0.08) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(99,102,241,0.12) !important;
+}
+
+.blocklyTreeRowContentContainer {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.blocklyTreeLabel {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  font-family: 'Nunito', 'Pretendard', sans-serif !important;
+  letter-spacing: -0.01em !important;
+}
+
+.blocklyTreeIcon {
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+  margin-right: 0 !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+}
+
+.blocklyTreeSelected .blocklyTreeRow {
+  background: rgba(99,102,241,0.12) !important;
+  box-shadow: 0 2px 8px rgba(99,102,241,0.15) !important;
+}
+
+.blocklyToolboxDiv {
+  background: #F8FAFC !important;
+  padding: 8px 0 !important;
+  width: 120px !important;
+  border-right: 1px solid #E2E8F0 !important;
+}
+
+.blocklyFlyoutBackground {
+  fill: #FFFFFF !important;
+  fill-opacity: 0.98 !important;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.04)) !important;
+}
+
+.blocklyScrollbarVertical,
+.blocklyScrollbarHorizontal {
+  display: none !important;
+}
 
 /* Custom utility classes */
 .glass {

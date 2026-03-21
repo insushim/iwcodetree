@@ -124,20 +124,7 @@ export function MissionPlayer({ missionId }: MissionPlayerProps) {
       </div>
 
       <div className="flex-1 flex gap-4 overflow-hidden">
-        {/* Guide Panel */}
-        <div className="w-72 flex-shrink-0">
-          <StepGuidePanel
-            steps={[...mission.steps]}
-            currentStep={currentStep}
-            completedSteps={completedSteps}
-            onStepChange={setCurrentStep}
-          />
-          <div className="mt-3">
-            <HintSystem hints={[...mission.hints]} />
-          </div>
-        </div>
-
-        {/* Workspace */}
+        {/* Main Workspace Area */}
         <div className="flex-1 relative rounded-xl overflow-hidden border border-[var(--border-light)]">
           <BlockWorkspace
             spriteId="sprite_1"
@@ -146,11 +133,27 @@ export function MissionPlayer({ missionId }: MissionPlayerProps) {
           />
         </div>
 
-        {/* Stage */}
-        <div className="w-[300px] flex-shrink-0">
+        {/* Right Panel: Stage + Guide + Hints */}
+        <div className="w-80 flex-shrink-0 flex flex-col gap-3">
+          {/* Stage at top */}
           <div className="relative bg-white rounded-xl overflow-hidden border border-[var(--border-light)] shadow-sm">
-            <StageCanvas width={280} height={210} />
+            <StageCanvas width={300} height={225} />
             <StageOverlay />
+          </div>
+
+          {/* Guide Panel in middle */}
+          <div className="flex-1 overflow-hidden">
+            <StepGuidePanel
+              steps={[...mission.steps]}
+              currentStep={currentStep}
+              completedSteps={completedSteps}
+              onStepChange={setCurrentStep}
+            />
+          </div>
+
+          {/* Hints at bottom */}
+          <div className="flex-shrink-0">
+            <HintSystem hints={[...mission.hints]} />
           </div>
         </div>
       </div>
