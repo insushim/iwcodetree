@@ -38,36 +38,36 @@ export function MissionPlayer({ missionId }: MissionPlayerProps) {
   const [, setCode] = useState("");
   const workspaceRef = useRef<any>(null);
   const hasBlocksRef = useRef(false);
+  const completedStepsRef = useRef(completedSteps);
+  completedStepsRef.current = completedSteps;
 
   const mission = missionData[missionId] ?? fallbackMission;
 
   // Track workspace changes to auto-advance steps
-  const handleCodeChange = useCallback(
-    (code: string) => {
-      setCode(code);
-      const blockCount = workspaceRef.current
-        ? workspaceRef.current.getAllBlocks(false).length
-        : 0;
+  // IMPORTANT: no state dependencies - use ref to avoid re-creating workspace
+  const handleCodeChange = useCallback((code: string) => {
+    setCode(code);
+    const blockCount = workspaceRef.current
+      ? workspaceRef.current.getAllBlocks(false).length
+      : 0;
 
-      // Step 1: User opened a category (detected by having workspace ready)
-      if (workspaceRef.current && !completedSteps.has(0)) {
-        setCompletedSteps((prev) => new Set(prev).add(0));
-        setCurrentStep(1);
-      }
+    // Step 1: User opened a category
+    if (workspaceRef.current && !completedStepsRef.current.has(0)) {
+      setCompletedSteps((prev) => new Set(prev).add(0));
+      setCurrentStep(1);
+    }
 
-      // Step 2: User placed a block in the workspace
-      if (blockCount > 0 && !hasBlocksRef.current) {
-        hasBlocksRef.current = true;
-        setCompletedSteps((prev) => new Set(prev).add(1));
-        setCurrentStep(2);
-      }
+    // Step 2: User placed a block in the workspace
+    if (blockCount > 0 && !hasBlocksRef.current) {
+      hasBlocksRef.current = true;
+      setCompletedSteps((prev) => new Set(prev).add(1));
+      setCurrentStep(2);
+    }
 
-      if (blockCount === 0) {
-        hasBlocksRef.current = false;
-      }
-    },
-    [completedSteps],
-  );
+    if (blockCount === 0) {
+      hasBlocksRef.current = false;
+    }
+  }, []);
 
   const handleWorkspaceReady = useCallback((ws: any) => {
     workspaceRef.current = ws;
